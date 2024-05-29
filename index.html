@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obligatorio</title>
+    <script src="js/clases.js"></script>
+    <script src="js/funciones.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <section id="loginApp">
+        <h1>Ingreso a la aplicación</h1>
+        <input type="text" placeholder="Nombre de Usuario" id="userLogin">
+        <input type="password" placeholder="Contraseña" id="passLogin">
+        <input type="button" value="Ingresar" id="btnLogin">
+        <input type="button" value="Registrarse" id="btnMostrarRegistrar">
+    </section>
+    <section id="registroApp">
+        <h2>Registro de usuario</h2>
+        <form>
+            <input type="text" placeholder="Nombre" id="nombrePersona" >
+            <input type="text" placeholder="Apellido" id="apellidoPersona">
+            <input type="text" placeholder="Nombre de usuario" id="nombreUsuario">
+            <input type="password" placeholder="*****" id="passUsuario">
+            <input type="number" placeholder="WWWW-XXXX-YYYY-ZZZZ" id="tarjeta">
+            <input type="number" placeholder="123" id="cvc">
+            <input type="button" value="Registrarse" id="btnRegistrar">
+            <input type="button" value="Volver" id="btnVolverInicio">
+        </form>
+    </section>
+    <section id="sectionCliente">
+        <h2>Sección Cliente</h2>
+        <form>
+            <input type="button" id="verProductos" value="Productos"> 
+            <!-- verProductos - Ver la seccion productos para comprar -->
+            <input type="button" id="verCarrito" value="Carrito">
+            <input type="button" id="verOfertas" value="Ofertas">
+            <input type="button" value="Salir" id="btnSalir">
+        </form>
+    </section>
+    <section id="sectionAdministrador">
+        <h2>Sección Administrador</h2>
+        <div>
+            <h3>Listas y aprobación de compras de los usuarios.</h3>
+            <select name="tablas" id="tablasDeAdmin">
+            <option>Compras Pendientes</option>
+            <option>Compras Canceladas</option>
+            <option>Compras Aprobadas</option>
+            </select>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cliente</th>
+                        <th>Producto</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla">
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <h3>Crear Productos</h3>
+            <form>
+                <input type="text" id="crearNombreProd" placeholder="Nombre de Producto">
+                <input type="number" id="crearPrecioProd" placeholder="Precio $">
+                <input type="text" id="crearImgProd" placeholder="Url imagen">
+                <input type="number" id="crearStockProd" placeholder="Cantidad">
+                <input type="button" value="Crear Producto" id="btnCrearProd">
+            </form>
+        </div>
+        <div>
+            <h3>Administrar Productos</h3>
+            <h4>Buscar Producto</h4>
+            <form>
+                <input type="text" id="buscarIdProducto" placeholder="Ingrese ID Producto">
+                <input type="button" value="Buscar Producto" id="btBuscarProducto">
+            </form>
+            <h4>Modificar Producto</h4>
+            <form>
+                <input type="number" id="stockProducto" placeholder="Stock">
+                <select name="estado" id="modificarEstado">
+                    <option>Activar</option>
+                    <option>Pausar</option>   
+                </select>
+                <select name="oferta" id="oferta">
+                    <option>Si</option>
+                    <option>No</option>
+                </select>
+                <input type="button" value="Modificar" id="btnModificarProd">
+            </form>
+        </div>
+            <form>
+                <input type="button" value="Ver Informe de Ganancias" id="btnVerInforme">
+            </form>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Unidades vendidas</th>
+                        <th>Ganancias</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaInformeGanancias">
+                </tbody>
+            </table>
+        <div>
+        </div>
+    </section>
+</body>
+</html>
