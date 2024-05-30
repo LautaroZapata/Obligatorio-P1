@@ -7,12 +7,20 @@
 
 
 /* SECCIONES OCULTAS  */
-/* #registroApp {
+#registroApp {
     display: none;
 }
 
 #sectionCliente {
     display: none;
-} */
+}
+
+#sectionAdministrador {
+    display: none;
+}
+
+#btnMostrarRegistro {
+    display: none;
+}
 
 /* SECCIONES OCULTAS  */

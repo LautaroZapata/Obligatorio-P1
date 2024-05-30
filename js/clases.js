@@ -24,15 +24,29 @@ class Sistema {
             new Producto ('Malla de Natacion',800,'Malla para mujer','https://lacasadelnadador.uy/wp-content/uploads/2020/10/MALLA-ARENA-SOLID-SWIM-2-1.jpg',12,'activo',false),
             new Producto ('Calzado de Futbol',3000,'Calzado para canchas de futbol 5.','https://f.fcdn.app/imgs/54e4e5/menpi.uy/menpuy/2f86/original/catalogo/DD9477600-0-1/460x460/champion-nike-futbol-hombre-phantom-gx-academy-tf-brt-crinson-black-s-c.jpg',23,'activo',false)
         ];
+        this.usuarioLogueado = null;
+
     }
 }
 
 
 class Administrador {
-    constructor (nombre,password) {
-        this.nombre = nombre;
+    constructor (username,password) {
+        this.username = username;
         this.password = password;
     }
+    // loginAdmin(username,password) {
+    //     let estaLogueado = false ;
+    //     for(let i =0;i < this.listaAdmins.length;i++) {
+    //         adminActual = this.listaAdmins[i];
+    //         if(adminActual.username.toLowerCase()==username.toLowerCase()){
+    //             if(adminActual.password == password) {
+    //                 estaLogueado = true
+    //             }
+    //         } 
+    //     }
+    //     return estaLogueado;
+    // }
 }
 
 let idCliente = 1;
