@@ -16,30 +16,33 @@
             <input type="password" placeholder="Contraseña" id="passLogin">
             <input type="button" value="Ingresar" id="btnLogin">
         </form>
-        
-    </section>
-    <section id="registroApp">
+        <br>
+        <br>
+        <br>
         <h2>Registro de usuario</h2>
         <form>
             <input type="text" placeholder="Nombre" id="nombrePersona" >
             <input type="text" placeholder="Apellido" id="apellidoPersona">
             <input type="text" placeholder="Nombre de usuario" id="nombreUsuario">
             <input type="password" placeholder="*****" id="passUsuario">
-            <input type="number" placeholder="WWWW-XXXX-YYYY-ZZZZ" id="tarjeta">
+            <input type="text" placeholder="WWWW-XXXX-YYYY-ZZZZ" id="tarjeta">
             <input type="number" placeholder="123" id="cvc">
             <input type="button" value="Registrarse" id="btnRegistrar">
-            <input type="button" value="Volver" id="btnVolverInicio">
         </form>
     </section>
     <section id="sectionCliente">
         <h2>Sección Cliente</h2>
         <form>
-            <input type="button" id="verProductos" value="Productos"> 
-            <!-- verProductos - Ver la seccion productos para comprar  -->
             <input type="button" id="verCarrito" value="Carrito">
             <input type="button" id="verOfertas" value="Ofertas">
-            <input type="button" value="Salir" id="btnSalir">
+            <input type="button" value="Salir" id="btnSalirCliente">
         </form>
+        <select id="elegirProducto">
+            
+        </select>
+        <article id="articuloProducto">
+            
+        </article>
     </section>
     <section id="sectionAdministrador">
         <h2>Sección Administrador</h2>
@@ -109,6 +112,7 @@
             </table>
         <div>
         </div>
+        <input type="button" value="Salir" id="btnSalirAdmin">
     </section>
 </body>
 </html>

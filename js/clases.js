@@ -27,6 +27,40 @@ class Sistema {
         this.usuarioLogueado = null;
 
     }
+    esAdmin(username,password) { //Metodo que comprueba si el usuario es administrador o no lo es.
+        let existeAdmin = false;
+        for(let i = 0; i < this.listaAdmins.length;i++){
+            let adminActual = this.listaAdmins[i];
+            if(adminActual.username.toLowerCase() === username.toLowerCase() && adminActual.password === password){
+                alert('Admin');
+                existeAdmin = true;
+            }
+        }
+        return existeAdmin;
+    }
+    esCliente(username,password) { //Metodo que comprueba si el usuario es cliente o no lo es.
+        let existeCliente = false;
+        for(let i =0;i<this.listaClientes.length;i++) {
+            let clienteActual = this.listaClientes[i];
+            if(clienteActual.username.toLowerCase() === username.toLowerCase() && clienteActual.password === password) {
+                alert('Cliente');
+                existeCliente = true;
+            }
+        }
+        return existeCliente;
+    }
+    obtenerProducto(nombre) {
+        let existe=null
+        for(let i=0 ; i< this.listaProductos.length; i++){
+            let objActual=this.listaProductos[i];
+            if(nombre==objActual.nombre){
+                existe=objActual
+            }
+        }
+        return existe
+    }
+    
+    
 }
 
 
@@ -35,21 +69,10 @@ class Administrador {
         this.username = username;
         this.password = password;
     }
-    // loginAdmin(username,password) {
-    //     let estaLogueado = false ;
-    //     for(let i =0;i < this.listaAdmins.length;i++) {
-    //         adminActual = this.listaAdmins[i];
-    //         if(adminActual.username.toLowerCase()==username.toLowerCase()){
-    //             if(adminActual.password == password) {
-    //                 estaLogueado = true
-    //             }
-    //         } 
-    //     }
-    //     return estaLogueado;
-    // }
+    
 }
 
-let idCliente = 1;
+let idCliente = 1;  //Contador de id inicializado en 1 para que se incremente automaticamente en cada cliente el id y sea unico
 
 class Cliente {
     constructor (nombre,apellido,username,password,tarjeta,cvc,estado) {
@@ -60,11 +83,13 @@ class Cliente {
         this.tarjeta = tarjeta;
         this.cvc = cvc;
         this.estado = estado;
-        this.id = 'numCliente ' +(idCliente++)
+        this.id = 'numCliente ' +(idCliente++);
+        this.saldo = 3000;
     }
+    
 }
 
-let idProducto = 1;
+let idProducto = 1; // Contador de id para productos inicializado en 1 para que cada producto tenga su id unico.
 class Producto {
     constructor (nombre,precio,descripcion,url,stock,estado,oferta){
         this.nombre = nombre;
@@ -76,4 +101,5 @@ class Producto {
         this.oferta = oferta;
         this.id = 'idProd ' + (idProducto++)
     }
+
 }

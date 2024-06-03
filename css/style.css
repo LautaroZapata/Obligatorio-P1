@@ -7,9 +7,6 @@
 
 
 /* SECCIONES OCULTAS  */
-#registroApp {
-    display: none;
-}
 
 #sectionCliente {
     display: none;
@@ -23,4 +20,17 @@
     display: none;
 }
 
+table td, table th {
+    border: 2px solid white;
+}
+
+table input {
+    width: 150px;
+    height: 150px;
+}
+img {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
 /* SECCIONES OCULTAS  */
