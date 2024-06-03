@@ -49,7 +49,7 @@ class Sistema {
         }
         return existeCliente;
     }
-    obtenerProducto(nombre) {
+    obtenerProducto(nombre) { // Obtiene un nombre y comprueba que exista. Si existe devuelve el objeto entero.
         let existe=null
         for(let i=0 ; i< this.listaProductos.length; i++){
             let objActual=this.listaProductos[i];
