@@ -45,7 +45,8 @@ function login(){ //Ingresa a la aplicacion si cumple con los requisitos.
         sistema.usuarioLogueado=true;
     } else if(sistema.esCliente(user,pass)){
         mostrarSeccion('sectionCliente')
-        cargarProductos();
+        cargarProductos(); // Carga los productos en el select
+        seleccionarProducto(); // Crea el articulo del primer producto
         get('loginForm').reset();
 
         sistema.usuarioLogueado=true;
@@ -123,7 +124,7 @@ function registroCliente () {
 
 
 
-function logout() {
+function logout() { // Cierra la sesion y cambia el estado del usuario
     mostrarSeccion('loginApp')
     sistema.usuarioLogueado= null
 }
@@ -165,27 +166,8 @@ function logout() {
 
 // COMPRA DE PRODUCTOS
 
-// function cargarTabla() {
-//     let texto = '';
-//     let listaProds = sistema.listaProductos;
-//     for(let i = 0; i< listaProds.length; i++) {
-//         let productoActual = listaProds[i];
-//         texto += `
-//             <tr>
-//                 <td>${productoActual.nombre}</td>
-//                 <td>${productoActual.descripcion}</td>
-//                 <td>${productoActual.precio}</td>
-//                 <td><img src='${productoActual.url}'></td>
-//                 <td><input type='number' id='cantUnidades'></td>
-//                 <td><input type='button' value='Comprar' id='btnComprarProd${productoActual.id}'></td>
-//             </tr>
-//         `
-//     }
-//     get('tablaProductosDisponibles').innerHTML = texto;
-// } 
 
-
-function cargarProductos() {
+function cargarProductos() { // Carga los productos dentro del select en options para que el usuario posteriormente elija una.
     let texto = '';
     let listaProds = sistema.listaProductos;
     for(let i =0; i< listaProds.length; i++) {
@@ -197,12 +179,12 @@ function cargarProductos() {
     get('elegirProducto').innerHTML = texto
 }
 
-function seleccionarProducto() {
+function seleccionarProducto() { // Cada vez que el usuario seleccione un producto del select se le creara un articulo para ese producto.
 
     let articulo = '';
     let nombreProducto = get('elegirProducto').value;
-    let objProducto = sistema.obtenerProducto(nombreProducto)
-    if(objProducto) {
+    let objProducto = sistema.obtenerProducto(nombreProducto) // Si existe el nombre nos devuelve el objeto entero del producto seleccionado.
+    if(objProducto) { // Si se cumple la condicion imprime el articulo cargando todas sus propiedades
         articulo += `
         <img src='${objProducto.url}'>
         <p>${objProducto.nombre}</p>
@@ -216,9 +198,7 @@ function seleccionarProducto() {
 }
 
 
-function actualizarProducto() {
-    let nombreProd = get('elegirProducto').value;
-    let objProducto = sistema.obtenerProducto(nombreProd)
+function actualizarProducto() { // Actualiza el articulo creado segun la opcion elegida de producto.
     seleccionarProducto()
 }
 // COMPRA DE PRODUCTOS
