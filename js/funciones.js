@@ -46,7 +46,7 @@ function login(){ //Ingresa a la aplicacion si cumple con los requisitos.
     } else if(sistema.esCliente(user,pass)){
         mostrarSeccion('sectionCliente')
         cargarProductos(); // Carga los productos en el select
-        seleccionarProducto(); // Crea el articulo del primer producto
+        seleccionarProducto(); // Selecciona el producto y crea el primer articulo seleccionado
         get('loginForm').reset();
 
         sistema.usuarioLogueado=true;
