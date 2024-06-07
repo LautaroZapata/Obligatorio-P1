@@ -12,8 +12,8 @@
     <section id="loginApp">
         <h1>Ingreso a la aplicación</h1>
         <form id="loginForm">
-            <input type="text" placeholder="Nombre de Usuario" id="userLogin">
-            <input type="password" placeholder="Contraseña" id="passLogin">
+            <input type="text" placeholder="Nombre de Usuario" id="userLogin" value="juancano"> 
+            <input type="password" placeholder="Contraseña" id="passLogin" value="juan1234">
             <input type="button" value="Ingresar" id="btnLogin">
         </form>
         <br>
@@ -33,7 +33,6 @@
     <section id="sectionCliente">
         <h2>Sección Cliente</h2>
         <form>
-            <input type="button" id="verCarrito" value="Carrito">
             <input type="button" id="verOfertas" value="Ofertas">
             <input type="button" value="Salir" id="btnSalirCliente">
         </form>
@@ -43,6 +42,24 @@
         <article id="articuloProducto">
             
         </article>  
+        <input type='number' placeholder='Cantidad' id='cantidadUnidades'>
+        <input type='button' value='Comprar' id='btnComprar'>
+        <article id="tablaComprasCliente">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Imagen</th>
+                        <th>Nombre</th>
+                        <th>Cant Unidades</th>
+                        <th>Monto Total</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tbodyComprasCliente">
+                </tbody>
+                
+            </table>
+        </article>
     </section>
     <section id="sectionAdministrador">
         <h2>Sección Administrador</h2>

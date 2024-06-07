@@ -12,6 +12,8 @@ function inicio () {
     get('btnSalirCliente').addEventListener('click',logout);
     get('btnSalirAdmin').addEventListener('click',logout);    
     get('elegirProducto').addEventListener('change',actualizarProducto);
+    get('btnComprar').addEventListener('click',comprar);
+
 }
 
 // FUNCIONES GENERICAS
@@ -78,7 +80,6 @@ function passValida (password) {
     } 
     if(cantMayus >= 1 && cantMinus >= 1 && cantNum >=1) {
         esValida = true;
-        console.log(esValida);
     } 
     return esValida;
 }
@@ -184,14 +185,13 @@ function seleccionarProducto() { // Cada vez que el usuario seleccione un produc
     let articulo = '';
     let nombreProducto = get('elegirProducto').value;
     let objProducto = sistema.obtenerProducto(nombreProducto) // Si existe el nombre nos devuelve el objeto entero del producto seleccionado.
-    if(objProducto) { // Si se cumple la condicion imprime el articulo cargando todas sus propiedades
+    if(objProducto && objProducto.verificarStockProducto() > 0 && objProducto.verificarEstadoProducto() == true) { // Si se cumple la condicion imprime el articulo cargando todas sus propiedades
         articulo += `
         <img src='${objProducto.url}'>
         <p>${objProducto.nombre}</p>
         <p>${objProducto.descripcion}</p>
         <p>$${objProducto.precio}</p>
-        <input type='number' placeholder='Cantidad' id='cantidadUnidades'>
-        <input type='button' value='Comprar' id='btnComprar'>
+        <p>${objProducto.estaEnOferta()}</p>
     `
     }
     get('articuloProducto').innerHTML = articulo
@@ -201,4 +201,35 @@ function seleccionarProducto() { // Cada vez que el usuario seleccione un produc
 function actualizarProducto() { // Actualiza el articulo creado segun la opcion elegida de producto.
     seleccionarProducto()
 }
+
+
+function cargarTablaCompras () {
+    let listaCompras = sistema.obtenerCompras();
+    let articuloComprado = '';
+    for(let i =0; i< listaCompras.length;i++) {
+        let compraActual = listaCompras[i];
+        articuloComprado += `
+            <tr>
+                <td><img src='${compraActual.imagen}'></td>
+                <td>${compraActual.nombre}</td>
+                <td>${compraActual.unidades}</td>
+                <td>${compraActual.montoTotal}</td>
+                <td>${compraActual.estado}</td>
+                <td>CREAR BOTON CANCELAR COMPRA</td>
+            </tr>
+
+        `
+        
+        get('tbodyComprasCliente').innerHTML = articuloComprado;
+        mostrar('tablaComprasCliente')
+    }
+}
+function comprar() {
+    let nombreProducto = get('elegirProducto').value;
+    let unidades = parseInt(get('cantidadUnidades').value);
+    let producto = sistema.obtenerProducto(nombreProducto);
+    sistema.listaCompras.push(new Compra (producto.nombre,unidades,producto.precio,producto.url))
+    cargarTablaCompras();
+}
+
 // COMPRA DE PRODUCTOS

@@ -20,6 +20,9 @@
     display: none;
 }
 
+#tablaComprasCliente {
+    display: none;
+}
 table td, table th {
     border: 2px solid white;
 }
