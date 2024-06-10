@@ -53,7 +53,6 @@ class Sistema {
     
     
     
-    
     obtenerProducto(nombre) { // Obtiene un nombre y comprueba que exista. Si existe devuelve el objeto entero.
         let existe=null
         for(let i=0 ; i< this.listaProductos.length; i++){
@@ -67,6 +66,16 @@ class Sistema {
     obtenerCompras() { //Devuelve el array de la lista de compras
         return this.listaCompras;
     }
+    cancelarCompra(idCompra) {
+        for(let i = 0; i< sistema.listaCompras.length;i++) {
+            let compraActual = sistema.listaCompras[i];
+            if(idCompra == compraActual.id) {
+                compraActual.estado = 'Cancelada';
+                console.log(compraActual.estado);
+            }
+        }
+    }
+    
 }
 
 
@@ -128,15 +137,16 @@ class Producto {
 let idCompra = 1;
 
 class Compra {
-    constructor (nombre,unidades,precio,imagen) {
+    constructor (nombre,unidades,precio,imagen,) {
         this.nombre = nombre,
         this.unidades = unidades,
         this.precio = precio,
         this.estado = 'pendiente',
-        this.montoTotal = this.precio * this.unidades;
-        this.imagen = imagen
-        this.id = idCompra++
+        this.montoTotal = this.precio * this.unidades,
+        this.imagen = imagen,
+        this.id = idCompra++,
+        this.comprador = sistema.usuarioLogueado
 
     }
-
+    
 }
