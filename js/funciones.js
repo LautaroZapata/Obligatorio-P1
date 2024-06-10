@@ -203,7 +203,7 @@ function actualizarProducto() { // Actualiza el articulo creado segun la opcion 
 }
 
 
-function cargarTablaCompras () {
+function cargarTablaCompras () { //Crea el contenido de la tabla de compras del cliente
     let listaCompras = sistema.obtenerCompras();
     let articuloComprado = '';
     for(let i =0; i< listaCompras.length;i++) {
@@ -224,7 +224,7 @@ function cargarTablaCompras () {
         mostrar('tablaComprasCliente')
     }
 }
-function comprar() {
+function comprar() { // Cuando el cliente realiza una compra se pushea la compra como un objeto Compra al array de listaCompras y se carga la tabla con el contenido
     let nombreProducto = get('elegirProducto').value;
     let unidades = parseInt(get('cantidadUnidades').value);
     let producto = sistema.obtenerProducto(nombreProducto);

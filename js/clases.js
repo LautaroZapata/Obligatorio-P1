@@ -64,7 +64,7 @@ class Sistema {
         }
         return existe
     }    
-    obtenerCompras() {
+    obtenerCompras() { //Devuelve el array de la lista de compras
         return this.listaCompras;
     }
 }
@@ -107,7 +107,7 @@ class Producto {
         this.oferta = oferta;
         this.id = 'idProd ' + (idProducto++)
     }
-    estaEnOferta() {
+    estaEnOferta() { // Verifica si el producto esta en oferta o no y devuelve un mensaje
         let oferta = '';
         if(this.oferta == true) {
             oferta = 'EN OFERTA'
@@ -116,10 +116,10 @@ class Producto {
         }
         return oferta
     }
-    verificarEstadoProducto () {
+    verificarEstadoProducto () { // Verifica  el estado del producto y lo retorna
         return this.estado;
     }
-    verificarStockProducto () {
+    verificarStockProducto () { // Retorna la cantidad de stock
         return this.stock
     }
 }
