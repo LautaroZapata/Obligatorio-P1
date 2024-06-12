@@ -27,6 +27,8 @@ class Sistema {
         this.usuarioLogueado = null;
         this.listaCompras = [];
 
+
+
     }
     esAdmin(username,password) { //Metodo que comprueba si el usuario es administrador o no lo es.
         let existeAdmin = false;
@@ -54,14 +56,14 @@ class Sistema {
     
     
     obtenerProducto(nombre) { // Obtiene un nombre y comprueba que exista. Si existe devuelve el objeto entero.
-        let existe=null
+        let resp=null
         for(let i=0 ; i< this.listaProductos.length; i++){
             let objActual=this.listaProductos[i];
             if(nombre==objActual.nombre){
-                existe=objActual
+                resp=objActual
             }
         }
-        return existe
+        return resp
     }    
     obtenerCompras() { //Devuelve el array de la lista de compras
         return this.listaCompras;
@@ -70,10 +72,20 @@ class Sistema {
         for(let i = 0; i< sistema.listaCompras.length;i++) {
             let compraActual = sistema.listaCompras[i];
             if(idCompra == compraActual.id) {
-                compraActual.estado = 'Cancelada';
+                compraActual.estado = 'cancelada';
                 console.log(compraActual.estado);
             }
         }
+    }
+    obtenerEstadoCompra(estado){ //Obtiene el estado del producto y el objeto completo
+        let lista =[];
+        for(let i =0; i < this.listaCompras.length;i++) {
+            let compraActual = this.listaCompras[i];
+            if(compraActual.estado == estado ) { 
+                lista.push(compraActual);
+            }
+        }
+        return lista;
     }
     
 }

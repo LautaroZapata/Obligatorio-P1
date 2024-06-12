@@ -44,6 +44,7 @@
         </article>  
         <input type='number' placeholder='Cantidad' id='cantidadUnidades'>
         <input type='button' value='Comprar' id='btnComprar'>
+            
         <article id="tablaComprasCliente">
             <table>
                 <thead>
@@ -54,14 +55,21 @@
                         <th>Monto Total</th>
                         <th>Estado</th>
                         <th>Usuario</th>
-
                     </tr>
                 </thead>
                 <tbody id="tbodyComprasCliente">
                 </tbody>
-                
             </table>
         </article>
+        <h3>Estado de Compras</h3>
+            <input type="radio" id="todas" name="compras" >
+            <label for="todas">Todas</label>
+            <input type="radio" id="pendientes" name="compras" >
+            <label for="pendientes">Pendientes</label>
+            <input type="radio" id="aprobadas" name="compras">
+            <label for="aprobadas">Aprobadas</label>
+            <input type="radio" id="canceladas" name="compras">
+            <label for="canceladas">Canceladas</label>
     </section>
     <section id="sectionAdministrador">
         <h2>Sección Administrador</h2>

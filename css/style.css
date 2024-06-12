@@ -26,6 +26,9 @@
 table td, table th {
     border: 2px solid white;
 }
+#tablaEstadoCompraClientes {
+    display: none;
+}
 
 table input {
     width: 150px;

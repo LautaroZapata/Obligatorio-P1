@@ -13,6 +13,13 @@ function inicio() {
   get("btnSalirAdmin").addEventListener("click", logout);
   get("elegirProducto").addEventListener("change", actualizarProducto);
   get("btnComprar").addEventListener("click", comprar);
+  get('pendientes').addEventListener('click',filtrarTabla);
+  get('aprobadas').addEventListener('click',filtrarTabla);
+  get('canceladas').addEventListener('click',filtrarTabla);
+  get('todas').addEventListener('click',filtrarTabla);
+
+
+
 }
 
 // FUNCIONES GENERICAS
@@ -124,8 +131,8 @@ function algoritmoLuhn(pNumero) {
     let contador = 0;
     let haynro = true;
     let i = pNumero.length - 2;
-  
-  
+
+
     while (i >= 0 && haynro) {
       let caracter = pNumero.charAt(i);
       if (!isNaN(caracter)) {
@@ -143,9 +150,9 @@ function algoritmoLuhn(pNumero) {
     let digitoVerificadorValido = checkDigito(suma, digitoVerificadorX);
     let modulodelasumaValiado = checkModulo(suma, digitoVerificadorX);
     return digitoVerificadorValido && modulodelasumaValiado;
-  
+
   }
-  
+
   function duplicarPar(pNum) {
     pNum = pNum * 2;
     if (pNum > 9) {
@@ -153,13 +160,13 @@ function algoritmoLuhn(pNumero) {
     }
     return pNum;
   }
-  
+
   function checkDigito(pSuma, pDigito) {
     let total = 9 * pSuma;
     let ultimoNro = total % 10
     return ultimoNro === pDigito;
   }
-  
+
   function checkModulo(pSuma, pDigito) {
     let total = pSuma + pDigito;
     let validacionFinal = false;
@@ -264,12 +271,35 @@ function actualizarProducto() {
   seleccionarProducto();
 }
 
-function cargarTablaCompras() {
-  //Crea el contenido de la tabla de compras del cliente
-  let listaCompras = sistema.obtenerCompras();
+function filtrarTabla() {
+    let pendientes = get('pendientes');
+    let aprobadas = get('aprobadas');
+    let canceladas = get('canceladas');
+    let todas = get('todas');
+    if(pendientes.checked) { 
+      cargarTablaCompras('pendiente')
+    } else if(aprobadas.checked){
+      cargarTablaCompras('aprobada')
+    }else if(canceladas.checked) {
+      cargarTablaCompras('cancelada')
+    }else {
+      cargarTablaCompras('')
+    }
+}
+function cargarTablaCompras(estado = '') {
+  let lista = [];
+  if (estado == '') {
+    lista = sistema.obtenerCompras();
+  } else if(estado == 'pendiente') {
+    lista = sistema.obtenerEstadoCompra('pendiente');
+  }else if( estado == 'aprobada') {
+    lista =sistema.obtenerEstadoCompra('aprobada') 
+  }else {
+    lista =sistema.obtenerEstadoCompra('cancelada');
+  }
   let articuloComprado = "";
-  for (let i = 0; i < listaCompras.length; i++) {
-    let compraActual = listaCompras[i];
+  for (let i = 0; i < lista.length; i++) {
+    let compraActual = lista[i];
     articuloComprado += `
             <tr>
                 <td><img src='${compraActual.imagen}'></td>
@@ -281,7 +311,7 @@ function cargarTablaCompras() {
         `;
     if (compraActual.estado == "pendiente") {
       articuloComprado += `
-                <td><input type='button' value='Cancelar Compra' id='${compraActual.id}-estadoCompra' class='cancelarCompra'></td> 
+                <td><input type='button' value='Cancelar Compra' id='${compraActual.id}-estadoCompra' class='cancelarCompra'></td>
             </tr>
             `;
     }
@@ -310,17 +340,18 @@ function comprar() {
   }
 }
 
-function actualizarTablaCliente() {
-  let idCompra = parseInt(this.id);
+function actualizarTablaCliente() { //Actualiza la tabla de compras del cliente.
+  let idCompra = parseInt(this.id); //Como se ejecuta en un boton agarra el id de ese boton que se esta ejecutando
   sistema.cancelarCompra(idCompra);
-  cargarTablaCompras();
+   cargarTablaCompras();
 }
+
 
 // COMPRA DE PRODUCTOS
 
 
-
-// CUANDO MOSTRAMOS TABLA CREAR RADIO BUTTON PARA FILTRAR POR TODAS, APROBADAS, CANCELADAS O PENDIENTES 
+//COMENTAR BIEN EL CODIGO
+// Verificar en radio buttons y no mostrar nada si no hay compras con ese filtro
 // MOSTRAR EN PARRAFO DE CLIENTE MONTO TOTAL DE TODAS LAS COMPRAS Y SALDO DISPONIBLE.
 // CREAR BOTON QUE MUESTRE SOLO PRODUCTOS EN OFERTA
 
