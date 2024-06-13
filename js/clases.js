@@ -13,8 +13,8 @@ class Sistema {
             new Cliente ('Lorena','Diaz','lorenadiaz','lorena4321','',444,'inactivo'), 
             new Cliente ('Juana', 'De Arco', 'juanadearco','juana1234','',555,'inactivo')];
         this.listaProductos = [
-            new Producto ('Remera Deportiva',600,'Remera negra excelente para ejercicio.','https://f.fcdn.app/imgs/3529dd/www.textilshop.com.uy/tex/5bb6/original/catalogo/500033neg1/460x460/remera-dry-fit-negro.jpg',15,false,false),
-            new Producto ('Calzado Deportivo',2500,'Calzado ideal para maratones y/o carreras.', 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTN_tz1C4Ez3IIC4-th4uv_Ap5_l1mTHRBsM-ixYpPZSSDqClHRYb6jxNSnSTUHXMUhcbG2pQoambnZu_QQIHCrEJ-VSR1xU7NS6odB4o4WnYMhZ3ByIGT3SXS5wqg&usqp=CAc',30,true,false),
+            new Producto ('Remera Deportiva',600,'Remera negra excelente para ejercicio.','https://f.fcdn.app/imgs/3529dd/www.textilshop.com.uy/tex/5bb6/original/catalogo/500033neg1/460x460/remera-dry-fit-negro.jpg',15,false,true),
+            new Producto ('Calzado Deportivo',2500,'Calzado ideal para maratones y/o carreras.', 'https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTN_tz1C4Ez3IIC4-th4uv_Ap5_l1mTHRBsM-ixYpPZSSDqClHRYb6jxNSnSTUHXMUhcbG2pQoambnZu_QQIHCrEJ-VSR1xU7NS6odB4o4WnYMhZ3ByIGT3SXS5wqg&usqp=CAc',30,true,true),
             new Producto ('Guantes',350,'La mejor opcion para hacer ejercicio con bajas temperaturas.','https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRVqHM9ukFq6HaCfCVKyGnPgjF8IBa4HYPDFA&s',80,true,false),
             new Producto ('Raqueta de Tenis',5000,'La mejor opcion para adentrarse en el Tenis.','https://http2.mlstatic.com/D_NQ_NP_799997-MLU74180198535_012024-O.webp',20,true,false),
             new Producto ('Pelota de Basketball',800,'Pelota profesional de basketball','https://http2.mlstatic.com/D_NQ_NP_799997-MLU74180198535_012024-O.webp',114,true,false),
@@ -64,18 +64,38 @@ class Sistema {
             }
         }
         return resp
+    }
+    obtenerCliente(username) {
+        let resp =null;
+        for(let i = 0; i< this.listaClientes.length;i++) {
+            let clienteActual = this.listaClientes[i];
+            if(clienteActual.username == username) {
+                resp = clienteActual;
+            }
+        }
+        return resp
     }    
     obtenerCompras() { //Devuelve el array de la lista de compras
         return this.listaCompras;
     }
     cancelarCompra(idCompra) {
-        for(let i = 0; i< sistema.listaCompras.length;i++) {
-            let compraActual = sistema.listaCompras[i];
+        for(let i = 0; i< this.listaCompras.length;i++) {
+            let compraActual = this.listaCompras[i];
             if(idCompra == compraActual.id) {
                 compraActual.estado = 'cancelada';
                 console.log(compraActual.estado);
             }
         }
+    }
+    aprobarCompra(idCompra) { // Verifica si el producto esta en oferta o no y devuelve un mensaje
+        for(let i =0; i< this.listaCompras.length;i++) {
+            let compraActual = this.listaCompras[i];
+            if(idCompra ==  compraActual.id) {
+                if(compraActual.estado == "pendiente") {
+                    compraActual.estado = 'aprobada'
+                } 
+            }
+        }        
     }
     obtenerEstadoCompra(estado){ //Obtiene el estado del producto y el objeto completo
         let lista =[];
@@ -112,6 +132,9 @@ class Cliente {
         this.estado = estado;
         this.id = 'numCliente ' +(idCliente++);
         this.saldo = 3000;
+    }
+    verSaldo() {
+        return this.saldo
     }
     
 }
@@ -160,5 +183,6 @@ class Compra {
         this.comprador = sistema.usuarioLogueado
 
     }
+    
     
 }

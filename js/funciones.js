@@ -17,6 +17,8 @@ function inicio() {
   get('aprobadas').addEventListener('click',filtrarTabla);
   get('canceladas').addEventListener('click',filtrarTabla);
   get('todas').addEventListener('click',filtrarTabla);
+  get('verOfertas').addEventListener('click',verOfertas);
+  get('verTablaDeAprobacionAdmin').addEventListener('change',mostrarListaAprobaciones); // Muestra la lista compras pendientes, aprobadas o canceladas.
 
 
 
@@ -49,11 +51,12 @@ function login() {
     alert("Los campos son obligatorios");
   } else if (sistema.esAdmin(user, pass)) {
     mostrarSeccion("sectionAdministrador");
+    mostrarListaAprobaciones();
     get("loginForm").reset();
     sistema.usuarioLogueado = user;
   } else if (sistema.esCliente(user, pass)) {
     mostrarSeccion("sectionCliente");
-    cargarProductos(); // Carga los productos en el select
+    cargarProductos(sistema.listaProductos); // Carga los productos en el select con el parametro de lista de productos.
     seleccionarProducto(); // Selecciona el producto y crea el primer articulo seleccionado
     get("loginForm").reset();
     sistema.usuarioLogueado = user;
@@ -230,12 +233,11 @@ function logout() {
 
 // COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS
 
-function cargarProductos() {
+function cargarProductos(lista) {
   // Carga los productos dentro del select en options para que el usuario posteriormente elija una.
   let texto = "";
-  let listaProds = sistema.listaProductos;
-  for (let i = 0; i < listaProds.length; i++) {
-    let prodActual = listaProds[i];
+  for (let i = 0; i < lista.length; i++) {
+    let prodActual = lista[i];
     texto += `
             <option>${prodActual.nombre}</option>
         `;
@@ -275,14 +277,39 @@ function filtrarTabla() { // Aplica el filtro en la tabla de compras de las dife
     let pendientes = get('pendientes');
     let aprobadas = get('aprobadas');
     let canceladas = get('canceladas');
+    let lista;
     if(pendientes.checked) { //Comprueba cual radio button esta seleccionado y ejecuta la funcion con su estado correspondiente para mostrar el estado seleccionado.
-      cargarTablaCompras('pendiente')
+      lista = sistema.obtenerEstadoCompra('pendiente');
+      if(lista.length == 0) {
+        ocultar ('tablaComprasCliente')
+      }else {
+        cargarTablaCompras('pendiente')
+        mostrar("tablaComprasCliente");
+      }
     } else if(aprobadas.checked){
-      cargarTablaCompras('aprobada')
+      lista = sistema.obtenerEstadoCompra('aprobada');
+      if(lista.length == 0) {
+        ocultar ('tablaComprasCliente')
+      }else {
+        cargarTablaCompras('aprobada')
+        mostrar("tablaComprasCliente");
+      } 
     }else if(canceladas.checked) {
-      cargarTablaCompras('cancelada')
+      lista = sistema.obtenerEstadoCompra('cancelada');
+      if(lista.length == 0) {
+        ocultar ('tablaComprasCliente')
+      }else {
+        cargarTablaCompras('cancelada')
+        mostrar("tablaComprasCliente");
+      }
     }else {
-      cargarTablaCompras('')
+      lista = sistema.obtenerCompras()
+      if(lista.length == 0) {
+        ocultar('tablaComprasCliente')
+      }else {
+        cargarTablaCompras('')
+        mostrar("tablaComprasCliente");
+      }
     }
 }
 
@@ -293,7 +320,8 @@ function cargarTablaCompras(estado = '') { //Obtiene una lista con un estado de 
   } else if(estado == 'pendiente') {
     lista = sistema.obtenerEstadoCompra('pendiente');
   }else if( estado == 'aprobada') {
-    lista =sistema.obtenerEstadoCompra('aprobada') 
+    lista =sistema.obtenerEstadoCompra('aprobada')
+ 
   }else {
     lista =sistema.obtenerEstadoCompra('cancelada');
   }
@@ -320,9 +348,8 @@ function cargarTablaCompras(estado = '') { //Obtiene una lista con un estado de 
     let obtenerBtnCancelarCompra = document.querySelectorAll(".cancelarCompra"); //Se obtienen todos los botones de cancelar compra.
     for (let i = 0; i < obtenerBtnCancelarCompra.length; i++) { //Recorre todos los elementos que tengan la clase cancelarCompra y cuando se le hace click a uno de ellos se actualiza a cancelado el estado de compra.
       let btnActual = obtenerBtnCancelarCompra[i];
-      btnActual.addEventListener("click", actualizarTablaCliente);
+      btnActual.addEventListener("click", cancelarCompraCliente);
     }
-    mostrar("tablaComprasCliente");
   }
 }
 function comprar() {
@@ -342,17 +369,129 @@ function comprar() {
 
 }
 
-function actualizarTablaCliente() { //Actualiza la tabla de compras del cliente.
+function cancelarCompraCliente() { //Actualiza la tabla de compras del cliente.
   let idCompra = parseInt(this.id); //Como se ejecuta en un boton agarra el id de ese boton que se esta ejecutando
   sistema.cancelarCompra(idCompra);
    cargarTablaCompras();
+   filtrarTabla()
 }
+
+function verOfertas(){
+  let listaOfertas = [];
+  let listaProductos = sistema.listaProductos;
+  for(let i =0; i< listaProductos.length;i++) {
+    let prodActual = listaProductos[i];
+    if(prodActual.oferta == true) {
+      listaOfertas.push(prodActual);
+    }
+  }
+  cargarProductos(listaOfertas)
+
+}
+
+
+function montoTotalySaldoCliente() {
+  let parrafo = get('clienteSaldoMontoTotal')
+  let cliente = sistema.obtenerCliente(sistema.usuarioLogueado)
+  let listaAprobadas =  sistema.obtenerEstadoCompra('aprobada');
+  let montoTotalComprasAprobadas;
+  for(let i=0; i< listaAprobadas.length;i++){
+    let compraActual = listaAprobadas[i];
+    montoTotalComprasAprobadas += compraActual.montoTotal
+  }
+  parrafo.innerHTML = `${cliente.saldo} montoTotal:${montoTotalComprasAprobadas}`  
+
+}
+
+//ARREGLAR FUNCTION
 
 
 // COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS
 
 
-// Verificar en radio buttons y no mostrar nada si no hay compras con ese filtro
+
+//PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR
+
+function mostrarListaAprobaciones() {
+  let select = get('verTablaDeAprobacionAdmin').value;
+  let lista;
+  if(select == 'Compras Pendientes') {
+    lista = sistema.obtenerEstadoCompra('pendiente')
+    if(lista.length == 0) {
+      ocultar('tablaAprobacionesCompras')
+    }else {
+      cargarTablaDeAprobaciones('pendiente')
+    }
+  }else if(select == 'Compras Canceladas') {
+    lista = sistema.obtenerEstadoCompra('cancelada')
+    if(lista.length == 0) {
+      ocultar('tablaAprobacionesCompras')
+    }else {
+      lista = cargarTablaDeAprobaciones('cancelada')
+    }
+  }else {
+    lista = sistema.obtenerEstadoCompra('aprobada')
+    if(lista.length == 0) {
+      ocultar('tablaAprobacionesCompras')
+    }else {
+    cargarTablaDeAprobaciones('aprobada')
+    }
+  }
+
+}
+
+function cargarTablaDeAprobaciones(estado) { 
+  let lista = [];
+  if(estado == 'pendiente') {
+    lista = sistema.obtenerEstadoCompra('pendiente');
+  }else if( estado == 'aprobada') {
+    lista =sistema.obtenerEstadoCompra('aprobada')
+  }else {
+    lista =sistema.obtenerEstadoCompra('cancelada');
+  }
+
+  let articuloComprado = "";
+  for (let i = 0; i < lista.length; i++) { 
+    let compraActual = lista[i];
+    articuloComprado += `
+            <tr>
+                <td>${compraActual.comprador}</td>
+                <td>${compraActual.nombre}</td>
+                <td>${compraActual.montoTotal}</td>
+                <td>${compraActual.estado}</td>
+        `;
+    if (compraActual.estado == "pendiente") { 
+      articuloComprado += `
+                <td><input type='button' value='Aprobar Compra' id='${compraActual.id}-estadoCompraAdmin' class='aprobarCompra'></td>
+                
+            </tr>
+            `;
+    }
+
+    get("tablaAprobaciones").innerHTML = articuloComprado;
+    let obtenerBtnAprobarCompra = document.querySelectorAll(".aprobarCompra"); 
+    for (let i = 0; i < obtenerBtnAprobarCompra.length; i++) { 
+      let btnActual = obtenerBtnAprobarCompra[i];
+      btnActual.addEventListener("click", aprobarCompraAdmin);
+    }
+  }
+  mostrar('tablaAprobacionesCompras')
+}
+
+function aprobarCompraAdmin () {
+  let idCompra = parseInt(this.id)
+  sistema.aprobarCompra(idCompra)
+  montoTotalySaldoCliente();
+  mostrarListaAprobaciones()
+  cargarTablaCompras()
+}
+
+
+//PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR
+
+
+
+
+
+
 // MOSTRAR EN PARRAFO DE CLIENTE MONTO TOTAL DE TODAS LAS COMPRAS Y SALDO DISPONIBLE.
-// CREAR BOTON QUE MUESTRE SOLO PRODUCTOS EN OFERTA
-//PERFIL ADMINISTRADOR
