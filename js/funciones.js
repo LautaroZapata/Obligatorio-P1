@@ -39,7 +39,7 @@ function mostrarSeccion(id) {
 
 // FUNCIONES GENERICAS
 
-// FUNCIONES LOGIN Y REGISTRO con sus validaciones
+// FUNCIONES LOGIN Y REGISTRO con sus validaciones - FUNCIONES LOGIN Y REGISTRO con sus validaciones
 
 function login() {
   //Ingresa a la aplicacion si cumple con los requisitos.
@@ -56,20 +56,18 @@ function login() {
     cargarProductos(); // Carga los productos en el select
     seleccionarProducto(); // Selecciona el producto y crea el primer articulo seleccionado
     get("loginForm").reset();
-
     sistema.usuarioLogueado = user;
   } else {
     alert("Datos incorrectos");
   }
 }
 
-function passValida(password) {
+function passValida(password) { // Verifica si la password que llega por parametro cumple con los requisitos.
   let esValida = null;
   let cantMayus = 0;
   let cantMinus = 0;
   let cantNum = 0;
 
-  //String 5 caracteres, al menos una mayus, una minus y un numero.
   if (password === "" || password.length < 4) {
     esValida = false;
   } else {
@@ -90,7 +88,7 @@ function passValida(password) {
   return esValida;
 }
 
-function tarjetaValidaConGuion(numero) {
+function tarjetaValidaConGuion(numero) { // Valida si el numero de la tarjeta tiene guiones y si los tiene en la posicion correcta
   let numeros = "0123456789-";
   let esValida = false;
   if (numero.length == 19) {
@@ -109,7 +107,7 @@ function tarjetaValidaConGuion(numero) {
   return esValida;
 }
 
-function tarjetaValidaLuhn(numero) {
+function tarjetaValidaLuhn(numero) { // Verifica si el numero que recibe por parametro cumple con el algoritmo de Luhn
     let esValida = false;
     let numeros = '0123456789';
     let numeroLuhn = '';
@@ -125,7 +123,8 @@ function tarjetaValidaLuhn(numero) {
     return esValida
 }
 // NUMERO TARJETA VALIDO 1445-3512-5576-4076
-function algoritmoLuhn(pNumero) {
+// FUNCIONES ALGORITMO DE LUHN - FUNCIONES ALGORITMO DE LUHN - FUNCIONES ALGORITMO DE LUHN 
+function algoritmoLuhn(pNumero) { 
     let suma = 0;
     let digitoVerificadorX = Number(pNumero.charAt(pNumero.length - 1));
     let contador = 0;
@@ -175,7 +174,10 @@ function algoritmoLuhn(pNumero) {
     }
     return validacionFinal;
   }
-function registroCliente() {
+
+  // FUNCIONES ALGORITMO DE LUHN - FUNCIONES ALGORITMO DE LUHN - FUNCIONES ALGORITMO DE LUHN
+
+function registroCliente() { // Comprueba que todos los requisitos para el registro sean validos.
   let nombreCliente = get("nombrePersona").value;
   let apellidoCliente = get("apellidoPersona").value;
   let usernameCliente = get("nombreUsuario").value.toLowerCase();
@@ -202,7 +204,7 @@ function registroCliente() {
     !tarjetaValidaConGuion(tarjeta) || !tarjetaValidaLuhn(tarjeta)
   ) {
     alert("Datos incorrectos");
-  } else {
+  } else { //Si se cumplen todos los campos de manera correcta entonces se crea un nuevo objeto de la clase Cliente.
     let nuevoCliente = new Cliente(
       nombreCliente,
       apellidoCliente,
@@ -212,12 +214,12 @@ function registroCliente() {
       cvc,
       estado
     );
-    sistema.listaClientes.push(nuevoCliente);
+    sistema.listaClientes.push(nuevoCliente); // Y ese cliente se agrega a una lista de clientes
     alert("usuario creado");
   }
 }
 
-// FUNCIONES LOGIN Y REGISTRO con sus validaciones
+// FUNCIONES LOGIN Y REGISTRO con sus validaciones - FUNCIONES LOGIN Y REGISTRO con sus validaciones
 
 function logout() {
   // Cierra la sesion y cambia el estado del usuario
@@ -226,9 +228,7 @@ function logout() {
 }
 
 
-
-
-// COMPRA DE PRODUCTOS
+// COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS
 
 function cargarProductos() {
   // Carga los productos dentro del select en options para que el usuario posteriormente elija una.
@@ -267,16 +267,15 @@ function seleccionarProducto() {
 }
 
 function actualizarProducto() {
-  // Actualiza el articulo creado segun la opcion elegida de producto.
+  // Actualiza el articulo creado en el select segun la opcion elegida de producto.
   seleccionarProducto();
 }
 
-function filtrarTabla() {
+function filtrarTabla() { // Aplica el filtro en la tabla de compras de las diferentes opciones de estado. 
     let pendientes = get('pendientes');
     let aprobadas = get('aprobadas');
     let canceladas = get('canceladas');
-    let todas = get('todas');
-    if(pendientes.checked) { 
+    if(pendientes.checked) { //Comprueba cual radio button esta seleccionado y ejecuta la funcion con su estado correspondiente para mostrar el estado seleccionado.
       cargarTablaCompras('pendiente')
     } else if(aprobadas.checked){
       cargarTablaCompras('aprobada')
@@ -286,7 +285,8 @@ function filtrarTabla() {
       cargarTablaCompras('')
     }
 }
-function cargarTablaCompras(estado = '') {
+
+function cargarTablaCompras(estado = '') { //Obtiene una lista con un estado de compra y las carga en HTML como una tabla.
   let lista = [];
   if (estado == '') {
     lista = sistema.obtenerCompras();
@@ -298,7 +298,7 @@ function cargarTablaCompras(estado = '') {
     lista =sistema.obtenerEstadoCompra('cancelada');
   }
   let articuloComprado = "";
-  for (let i = 0; i < lista.length; i++) {
+  for (let i = 0; i < lista.length; i++) { //Recorre la lista obtenida del metodo obtenerEstadoCompra
     let compraActual = lista[i];
     articuloComprado += `
             <tr>
@@ -309,7 +309,7 @@ function cargarTablaCompras(estado = '') {
                 <td>${compraActual.estado}</td>
                 <td>${compraActual.comprador}</td>
         `;
-    if (compraActual.estado == "pendiente") {
+    if (compraActual.estado == "pendiente") { // Si el estado de la compra es pendiente se agrega un boton de cancelar compra a la tabla.
       articuloComprado += `
                 <td><input type='button' value='Cancelar Compra' id='${compraActual.id}-estadoCompra' class='cancelarCompra'></td>
             </tr>
@@ -317,8 +317,8 @@ function cargarTablaCompras(estado = '') {
     }
 
     get("tbodyComprasCliente").innerHTML = articuloComprado;
-    let obtenerBtnCancelarCompra = document.querySelectorAll(".cancelarCompra");
-    for (let i = 0; i < obtenerBtnCancelarCompra.length; i++) {
+    let obtenerBtnCancelarCompra = document.querySelectorAll(".cancelarCompra"); //Se obtienen todos los botones de cancelar compra.
+    for (let i = 0; i < obtenerBtnCancelarCompra.length; i++) { //Recorre todos los elementos que tengan la clase cancelarCompra y cuando se le hace click a uno de ellos se actualiza a cancelado el estado de compra.
       let btnActual = obtenerBtnCancelarCompra[i];
       btnActual.addEventListener("click", actualizarTablaCliente);
     }
@@ -336,8 +336,10 @@ function comprar() {
     sistema.listaCompras.push(
       new Compra(producto.nombre, unidades, producto.precio, producto.url)
     );
-    cargarTablaCompras();
   }
+  cargarTablaCompras() // Se carga la tabla con el nuevo contenido de la compra
+  filtrarTabla() // Filtra esta tabla para que siga mostrando el radio button seleccionado
+
 }
 
 function actualizarTablaCliente() { //Actualiza la tabla de compras del cliente.
@@ -347,12 +349,10 @@ function actualizarTablaCliente() { //Actualiza la tabla de compras del cliente.
 }
 
 
-// COMPRA DE PRODUCTOS
+// COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS
 
 
-//COMENTAR BIEN EL CODIGO
 // Verificar en radio buttons y no mostrar nada si no hay compras con ese filtro
 // MOSTRAR EN PARRAFO DE CLIENTE MONTO TOTAL DE TODAS LAS COMPRAS Y SALDO DISPONIBLE.
 // CREAR BOTON QUE MUESTRE SOLO PRODUCTOS EN OFERTA
-
 //PERFIL ADMINISTRADOR
