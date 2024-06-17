@@ -11,7 +11,7 @@ function inicio() {
   get("btnRegistrar").addEventListener("click", registroCliente);
   get("btnSalirCliente").addEventListener("click", logout);
   get("btnSalirAdmin").addEventListener("click", logout);
-  get("elegirProducto").addEventListener("change", actualizarProducto);
+  get("elegirProducto").addEventListener("change", seleccionarProducto);
   get("btnComprar").addEventListener("click", comprar);
   get('pendientes').addEventListener('click',filtrarTabla);
   get('aprobadas').addEventListener('click',filtrarTabla);
@@ -55,11 +55,13 @@ function login() {
     get("loginForm").reset();
     sistema.usuarioLogueado = user;
   } else if (sistema.esCliente(user, pass)) {
-    mostrarSeccion("sectionCliente");
+    sistema.usuarioLogueado = user;
     cargarProductos(sistema.listaProductos); // Carga los productos en el select con el parametro de lista de productos.
+    cargarTablaCompras()
+    mostrarSeccion("sectionCliente");
     seleccionarProducto(); // Selecciona el producto y crea el primer articulo seleccionado
     get("loginForm").reset();
-    sistema.usuarioLogueado = user;
+    
     montoTotalySaldoCliente();
 
   } else {
@@ -270,10 +272,6 @@ function seleccionarProducto() {
   get("articuloProducto").innerHTML = articulo;
 }
 
-function actualizarProducto() {
-  // Actualiza el articulo creado en el select segun la opcion elegida de producto.
-  seleccionarProducto();
-}
 
 function filtrarTabla() { // Aplica el filtro en la tabla de compras de las diferentes opciones de estado. 
     let pendientes = get('pendientes');
@@ -330,7 +328,8 @@ function cargarTablaCompras(estado = '') { //Obtiene una lista con un estado de 
   let articuloComprado = "";
   for (let i = 0; i < lista.length; i++) { //Recorre la lista obtenida del metodo obtenerEstadoCompra
     let compraActual = lista[i];
-    articuloComprado += `
+    if(sistema.usuarioLogueado == compraActual.comprador){
+      articuloComprado += `
             <tr>
                 <td><img src='${compraActual.imagen}'></td>
                 <td>${compraActual.nombre}</td>
@@ -352,6 +351,8 @@ function cargarTablaCompras(estado = '') { //Obtiene una lista con un estado de 
       let btnActual = obtenerBtnCancelarCompra[i];
       btnActual.addEventListener("click", cancelarCompraCliente);
     }
+    }
+    
   }
 }
 function comprar() {
@@ -402,7 +403,7 @@ function montoTotalySaldoCliente() { // Obtiene el objeto del cliente, luego rec
     let compraActual = listaAprobadas[i];
     montoTotalComprasAprobadas += compraActual.montoTotal
   }
-  parrafo.innerHTML = `${cliente.saldo} montoTotal:${montoTotalComprasAprobadas}`  
+  parrafo.innerHTML = `Saldo disponible: $${cliente.saldo} Monto total de compras: ${montoTotalComprasAprobadas}`  
 }
 
 //ARREGLAR FUNCTION
@@ -493,8 +494,7 @@ function aprobarCompraAdmin () { // Aprueba la compra del cliente y actualiza la
 
 
 
+// ARREGLAR IMPORTANTE :  Cuando iniciamos sesion con otro cliente se sigue mostrando la lista de compras de todos los clientes.
 
+//Posible arreglo en cargarTablaCompras if(compraActual.comprador == usuarioLogueado) { que se imprima todo lo de la tabla y sino que no se imprima, esto deberia hacer que se impriman solamente las compras del comprador que va a ser el cliente que ingreso al sistema y no imprime si hay compras de otros clientes}
 
-// MOSTRAR SALDO RESTANTE DE CLIENTE EN UN PARRAFO. (Se soluciono el mostrar monto total ejecutando la funcion cuando el cliente se loguea ya que si lo haciamos cuando se aprobaba la compra agarraba el objeto del administrador que fue el ultimo usuario logueado.)
-
-// REVISAR FUNCION actualizarProducto() es recursiva y creo que no aporta en nada, la podemos reemplazar simplemente por seleccionarProducto();

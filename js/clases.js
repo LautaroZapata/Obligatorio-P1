@@ -87,13 +87,17 @@ class Sistema {
             }
         }
     }
-    aprobarCompra(idCompra) { // Verifica si el producto esta en oferta o no y devuelve un mensaje
+    aprobarCompra(idCompra) { // Recorre la lista de compras pendientes y si coincide el parametro idCompra con el id de la compra se actualiza el estado de la compra y se le resta el monto total de la compra al saldo del cliente
         for(let i =0; i< this.listaCompras.length;i++) {
             let compraActual = this.listaCompras[i];
-            if(idCompra ==  compraActual.id) {
-                if(compraActual.estado == "pendiente") {
+            let cliente = this.obtenerCliente(compraActual.comprador)
+            if(idCompra == compraActual.id) {
+                if(compraActual.estado == "pendiente" && cliente.saldo >= compraActual.montoTotal) {
                     compraActual.estado = 'aprobada'
-                } 
+                    cliente.saldo -= compraActual.montoTotal
+                }else {
+                    alert('El cliente no tiene saldo suficiente');
+                }
             }
         }        
     }
