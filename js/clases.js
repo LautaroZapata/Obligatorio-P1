@@ -133,9 +133,6 @@ class Cliente {
         this.id = 'numCliente ' +(idCliente++);
         this.saldo = 3000;
     }
-    verSaldo() {
-        return this.saldo
-    }
     
 }
 

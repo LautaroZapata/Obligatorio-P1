@@ -60,6 +60,8 @@ function login() {
     seleccionarProducto(); // Selecciona el producto y crea el primer articulo seleccionado
     get("loginForm").reset();
     sistema.usuarioLogueado = user;
+    montoTotalySaldoCliente();
+
   } else {
     alert("Datos incorrectos");
   }
@@ -376,7 +378,7 @@ function cancelarCompraCliente() { //Actualiza la tabla de compras del cliente.
    filtrarTabla()
 }
 
-function verOfertas(){
+function verOfertas(){ // Cuando se ejecuta se muestran unicamente los productos en oferta dentro del select donde mostramos los productos disponibles.
   let listaOfertas = [];
   let listaProductos = sistema.listaProductos;
   for(let i =0; i< listaProductos.length;i++) {
@@ -390,17 +392,17 @@ function verOfertas(){
 }
 
 
-function montoTotalySaldoCliente() {
+function montoTotalySaldoCliente() { // Obtiene el objeto del cliente, luego recorre la lista de compras aprobadas y actualiza en la seccion cliente el monto total de sus compras y su saldo actual.
   let parrafo = get('clienteSaldoMontoTotal')
-  let cliente = sistema.obtenerCliente(sistema.usuarioLogueado)
+  let usernameCliente = sistema.usuarioLogueado;
+  let cliente = sistema.obtenerCliente(usernameCliente)
   let listaAprobadas =  sistema.obtenerEstadoCompra('aprobada');
-  let montoTotalComprasAprobadas;
+  let montoTotalComprasAprobadas = 0;
   for(let i=0; i< listaAprobadas.length;i++){
     let compraActual = listaAprobadas[i];
     montoTotalComprasAprobadas += compraActual.montoTotal
   }
   parrafo.innerHTML = `${cliente.saldo} montoTotal:${montoTotalComprasAprobadas}`  
-
 }
 
 //ARREGLAR FUNCTION
@@ -412,7 +414,7 @@ function montoTotalySaldoCliente() {
 
 //PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR
 
-function mostrarListaAprobaciones() {
+function mostrarListaAprobaciones() { // Segun el select que tengamos elegido muestra sutabla correspondiente de compras.
   let select = get('verTablaDeAprobacionAdmin').value;
   let lista;
   if(select == 'Compras Pendientes') {
@@ -440,7 +442,7 @@ function mostrarListaAprobaciones() {
 
 }
 
-function cargarTablaDeAprobaciones(estado) { 
+function cargarTablaDeAprobaciones(estado) {  //Carga la tabla correspondiente segun el parametro que reciba. Si el estado es pendiente se generan botones para aprobar compra automaticamente y con un id incremental que posteriormente lo manipulamos por clases.
   let lista = [];
   if(estado == 'pendiente') {
     lista = sistema.obtenerEstadoCompra('pendiente');
@@ -478,10 +480,9 @@ function cargarTablaDeAprobaciones(estado) {
   mostrar('tablaAprobacionesCompras')
 }
 
-function aprobarCompraAdmin () {
+function aprobarCompraAdmin () { // Aprueba la compra del cliente y actualiza las tablas tanto de cliente como de administrador
   let idCompra = parseInt(this.id)
   sistema.aprobarCompra(idCompra)
-  montoTotalySaldoCliente();
   mostrarListaAprobaciones()
   cargarTablaCompras()
 }
@@ -494,4 +495,6 @@ function aprobarCompraAdmin () {
 
 
 
-// MOSTRAR EN PARRAFO DE CLIENTE MONTO TOTAL DE TODAS LAS COMPRAS Y SALDO DISPONIBLE.
+// MOSTRAR SALDO RESTANTE DE CLIENTE EN UN PARRAFO. (Se soluciono el mostrar monto total ejecutando la funcion cuando el cliente se loguea ya que si lo haciamos cuando se aprobaba la compra agarraba el objeto del administrador que fue el ultimo usuario logueado.)
+
+// REVISAR FUNCION actualizarProducto() es recursiva y creo que no aporta en nada, la podemos reemplazar simplemente por seleccionarProducto();
