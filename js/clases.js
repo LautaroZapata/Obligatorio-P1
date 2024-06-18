@@ -90,7 +90,7 @@ class Sistema {
     aprobarCompra(idCompra) { // Recorre la lista de compras pendientes y si coincide el parametro idCompra con el id de la compra se actualiza el estado de la compra y se le resta el monto total de la compra al saldo del cliente
         for(let i =0; i< this.listaCompras.length;i++) {
             let compraActual = this.listaCompras[i];
-            let cliente = this.obtenerCliente(compraActual.comprador)
+            let cliente = this.obtenerCliente(compraActual.comprador.username)
             let producto = this.obtenerProducto(compraActual.nombre)
             if(idCompra == compraActual.id) {
                 if(compraActual.estado == "pendiente" && cliente.saldo >= compraActual.montoTotal && compraActual.unidades <= producto.stock) {
@@ -187,7 +187,7 @@ class Compra {
         this.montoTotal = this.precio * this.unidades,
         this.imagen = imagen,
         this.id = idCompra++,
-        this.comprador = sistema.usuarioLogueado
+        this.comprador = sistema.obtenerCliente(sistema.usuarioLogueado)
 
     }
     

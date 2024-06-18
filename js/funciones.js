@@ -7,6 +7,7 @@ function get(id) {
 }
 
 function inicio() {
+  
   get("btnLogin").addEventListener("click", login);
   get("btnRegistrar").addEventListener("click", registroCliente);
   get("btnSalirCliente").addEventListener("click", logout);
@@ -25,9 +26,7 @@ function inicio() {
   get('btnVerInforme').addEventListener('click',verInformeDeGanancias);
   get('verTodosLosProductos').addEventListener('click',verTodosLosProductos)
 
-
 }
-
 // FUNCIONES GENERICAS
 function mostrar(id) {
   get(id).style.display = "block";
@@ -62,9 +61,9 @@ function login() {
     sistema.usuarioLogueado = user;
   } else if (sistema.esCliente(user, pass)) {
     sistema.usuarioLogueado = user;
-    cargarTablaCompras()
     cargarProductos(sistema.listaProductos); // Carga los productos en el select con el parametro de lista de productos.
     seleccionarProducto()
+    cargarTablaCompras()
     mostrarSeccion("sectionCliente");
     montoTotalySaldoCliente();
     get("loginForm").reset();
@@ -234,8 +233,8 @@ function registroCliente() { // Comprueba que todos los requisitos para el regis
 
 function logout() {
   // Cierra la sesion y cambia el estado del usuario
-  mostrarSeccion("loginApp");
   sistema.usuarioLogueado = null;
+  mostrarSeccion("loginApp");
 }
 
 
@@ -322,6 +321,7 @@ function filtrarTabla() { // Aplica el filtro en la tabla de compras de las dife
     }
 }
 
+
 function cargarTablaCompras(estado = '') { //Obtiene una lista con un estado de compra y las carga en HTML como una tabla.
   let lista = [];
   if (estado == '') {
@@ -334,10 +334,11 @@ function cargarTablaCompras(estado = '') { //Obtiene una lista con un estado de 
   }else {
     lista =sistema.obtenerEstadoCompra('cancelada');
   }
+  
   let articuloComprado = "";
   for (let i = 0; i < lista.length; i++) { //Recorre la lista obtenida del metodo obtenerEstadoCompra
     let compraActual = lista[i];
-    if(sistema.usuarioLogueado == compraActual.comprador){
+    if(sistema.usuarioLogueado == compraActual.comprador.username){
       articuloComprado += `
             <tr>
                 <td><img src='${compraActual.imagen}'></td>
@@ -345,21 +346,20 @@ function cargarTablaCompras(estado = '') { //Obtiene una lista con un estado de 
                 <td>${compraActual.unidades}</td>
                 <td>${compraActual.montoTotal}</td>
                 <td>${compraActual.estado}</td>
-                <td>${compraActual.comprador}</td>
+                <td>${compraActual.comprador.username}</td>
         `;
-    if (compraActual.estado == "pendiente") { // Si el estado de la compra es pendiente se agrega un boton de cancelar compra a la tabla.
-      articuloComprado += `
-                <td><input type='button' value='Cancelar Compra' id='${compraActual.id}-estadoCompra' class='cancelarCompra'></td>
-            </tr>
-            `;
-    }
+      if (compraActual.estado == "pendiente") { // Si el estado de la compra es pendiente se agrega un boton de cancelar compra a la tabla.
+        articuloComprado += `
+          <td><input type='button' value='Cancelar Compra' id='${compraActual.id}-estadoCompra' class='cancelarCompra'></td>
+          </tr>`;
+      }
+      get('tbodyComprasCliente').innerHTML = articuloComprado;
 
-    get("tbodyComprasCliente").innerHTML = articuloComprado;
-    let obtenerBtnCancelarCompra = document.querySelectorAll(".cancelarCompra"); //Se obtienen todos los botones de cancelar compra.
-    for (let i = 0; i < obtenerBtnCancelarCompra.length; i++) { //Recorre todos los elementos que tengan la clase cancelarCompra y cuando se le hace click a uno de ellos se actualiza a cancelado el estado de compra.
-      let btnActual = obtenerBtnCancelarCompra[i];
-      btnActual.addEventListener("click", cancelarCompraCliente);
-    }
+      let obtenerBtnCancelarCompra = document.querySelectorAll(".cancelarCompra"); //Se obtienen todos los botones de cancelar compra.
+      for (let i = 0; i < obtenerBtnCancelarCompra.length; i++) { //Recorre todos los elementos que tengan la clase cancelarCompra y cuando se le hace click a uno de ellos se actualiza a cancelado el estado de compra.
+        let btnActual = obtenerBtnCancelarCompra[i];
+        btnActual.addEventListener("click", cancelarCompraCliente);
+      }
     }
     
   }
@@ -411,7 +411,7 @@ function montoTotalySaldoCliente() { // Obtiene el objeto del cliente, luego rec
   let montoTotalComprasAprobadas = 0;
   for(let i=0; i< listaAprobadas.length;i++){
     let compraActual = listaAprobadas[i];
-    if(usernameCliente == compraActual.comprador) {
+    if(usernameCliente == compraActual.comprador.username) {
       montoTotalComprasAprobadas += compraActual.montoTotal;
     }
   }
@@ -470,7 +470,7 @@ function cargarTablaDeAprobaciones(estado) {  //Carga la tabla correspondiente s
     let compraActual = lista[i];
     articuloComprado += `
             <tr>
-                <td>${compraActual.comprador}</td>
+                <td>${compraActual.comprador.username}</td>
                 <td>${compraActual.nombre}</td>
                 <td>${compraActual.montoTotal}</td>
                 <td>${compraActual.estado}</td>
@@ -594,4 +594,6 @@ function verInformeDeGanancias () { //Muestra en lista el producto con sus unida
 
 
 // ARREGLAR IMPORTANTE :  Cuando iniciamos sesion con otro cliente se sigue mostrando la lista de compras de todos los clientes.
+
+// ARREGLAR INFORME DE GANANCIAS
 
