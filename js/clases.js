@@ -91,16 +91,22 @@ class Sistema {
         for(let i =0; i< this.listaCompras.length;i++) {
             let compraActual = this.listaCompras[i];
             let cliente = this.obtenerCliente(compraActual.comprador)
+            let producto = this.obtenerProducto(compraActual.nombre)
             if(idCompra == compraActual.id) {
-                if(compraActual.estado == "pendiente" && cliente.saldo >= compraActual.montoTotal) {
+                if(compraActual.estado == "pendiente" && cliente.saldo >= compraActual.montoTotal && compraActual.unidades <= producto.stock) {
                     compraActual.estado = 'aprobada'
                     cliente.saldo -= compraActual.montoTotal
+                    producto.stock -= compraActual.unidades;
                 }else {
-                    alert('El cliente no tiene saldo suficiente');
+                    alert('Saldo insuficiente o producto sin stock');
+                }
+                if(producto.stock == 0) {
+                    producto.estado = false
                 }
             }
         }        
     }
+
     obtenerEstadoCompra(estado){ //Obtiene el estado del producto y el objeto completo
         let lista =[];
         for(let i =0; i < this.listaCompras.length;i++) {
@@ -111,7 +117,7 @@ class Sistema {
         }
         return lista;
     }
-    
+
 }
 
 
@@ -142,14 +148,14 @@ class Cliente {
 
 let idProducto = 1; // Contador de id para productos inicializado en 1 para que cada producto tenga su id unico.
 class Producto {
-    constructor (nombre,precio,descripcion,url,stock,estado,oferta){
+    constructor (nombre,precio,descripcion,url,stock){
         this.nombre = nombre;
         this.precio = precio;
         this.descripcion = descripcion;
         this.url = url;
         this.stock = stock;
-        this.estado = estado;
-        this.oferta = oferta;
+        this.estado = true;
+        this.oferta = false;
         this.id = 'idProd ' + (idProducto++)
     }
     estaEnOferta() { // Verifica si el producto esta en oferta o no y devuelve un mensaje

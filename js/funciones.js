@@ -19,7 +19,11 @@ function inicio() {
   get('todas').addEventListener('click',filtrarTabla);
   get('verOfertas').addEventListener('click',verOfertas);
   get('verTablaDeAprobacionAdmin').addEventListener('change',mostrarListaAprobaciones); // Muestra la lista compras pendientes, aprobadas o canceladas.
-
+  get('btnCrearProd').addEventListener('click',crearProducto);
+  get('elegirProductoAdmin').addEventListener('change',mostrarProductoAdmin);
+  get('btnModificarProducto').addEventListener('click',modificarEstadoProducto);
+  get('btnVerInforme').addEventListener('click',verInformeDeGanancias);
+  get('verTodosLosProductos').addEventListener('click',verTodosLosProductos)
 
 
 }
@@ -52,18 +56,18 @@ function login() {
   } else if (sistema.esAdmin(user, pass)) {
     mostrarSeccion("sectionAdministrador");
     mostrarListaAprobaciones();
+    cargarProductosAdmin(sistema.listaProductos)
+    mostrarProductoAdmin();
     get("loginForm").reset();
     sistema.usuarioLogueado = user;
   } else if (sistema.esCliente(user, pass)) {
     sistema.usuarioLogueado = user;
-    cargarProductos(sistema.listaProductos); // Carga los productos en el select con el parametro de lista de productos.
     cargarTablaCompras()
+    cargarProductos(sistema.listaProductos); // Carga los productos en el select con el parametro de lista de productos.
+    seleccionarProducto()
     mostrarSeccion("sectionCliente");
-    seleccionarProducto(); // Selecciona el producto y crea el primer articulo seleccionado
-    get("loginForm").reset();
-    
     montoTotalySaldoCliente();
-
+    get("loginForm").reset();
   } else {
     alert("Datos incorrectos");
   }
@@ -237,6 +241,11 @@ function logout() {
 
 // COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS
 
+function verTodosLosProductos(){
+  cargarProductos(sistema.listaProductos)
+  seleccionarProducto()
+}
+
 function cargarProductos(lista) {
   // Carga los productos dentro del select en options para que el usuario posteriormente elija una.
   let texto = "";
@@ -389,6 +398,7 @@ function verOfertas(){ // Cuando se ejecuta se muestran unicamente los productos
     }
   }
   cargarProductos(listaOfertas)
+  seleccionarProducto()
 
 }
 
@@ -401,7 +411,9 @@ function montoTotalySaldoCliente() { // Obtiene el objeto del cliente, luego rec
   let montoTotalComprasAprobadas = 0;
   for(let i=0; i< listaAprobadas.length;i++){
     let compraActual = listaAprobadas[i];
-    montoTotalComprasAprobadas += compraActual.montoTotal
+    if(usernameCliente == compraActual.comprador) {
+      montoTotalComprasAprobadas += compraActual.montoTotal;
+    }
   }
   parrafo.innerHTML = `Saldo disponible: $${cliente.saldo} Monto total de compras: ${montoTotalComprasAprobadas}`  
 }
@@ -489,12 +501,97 @@ function aprobarCompraAdmin () { // Aprueba la compra del cliente y actualiza la
 }
 
 
+
+function crearProducto (){
+  let nombreProd = get('crearNombreProd').value;
+  let precioProd = parseInt(get('crearPrecioProd').value);
+  let descProd = get('crearDescProd').value;
+  let urlProd = get('crearImgProd').value;
+  let stockProd = parseInt(get('crearStockProd').value);
+
+  if(nombreProd == '' || precioProd == '' || urlProd == '' || stockProd == '' || descProd == '') {
+    alert('Ningun campo puede estar vacio');
+  }else {
+    sistema.listaProductos.push(new Producto (nombreProd,precioProd,descProd,urlProd,stockProd))
+    alert('Producto creado con exito')
+  }
+}
+
+function mostrarProductoAdmin(){
+  let articulo = "";
+  let nombreProducto = get("elegirProductoAdmin").value;
+  let objProducto = sistema.obtenerProducto(nombreProducto); // Si existe el nombre nos devuelve el objeto entero del producto seleccionado.
+    articulo += `
+        <img src='${objProducto.url}'>
+        <p>${objProducto.nombre}</p>
+        <p>$${objProducto.precio}</p>
+    `;
+  get("articleAdmin").innerHTML = articulo;
+}
+
+function modificarEstadoProducto () { 
+  let nombreProducto = get('elegirProductoAdmin').value;
+  let objProducto = sistema.obtenerProducto(nombreProducto);
+  let stock = get('modificarStock').value;
+  let estadoActivo = get('estadoProductoActivo');
+  let ofertaActiva = get('ofertaProductoActivo');
+  
+  if(estadoActivo.checked){
+    objProducto.estado = true;
+  }else {
+    objProducto.estado = false;
+  }
+  if(ofertaActiva.checked) {
+    objProducto.oferta = true;
+  }else {
+    objProducto.oferta = false;
+  }
+
+  if(parseInt(stock) <=0) {
+    objProducto.estado = false;
+    objProducto.stock = 0;
+    alert('El producto no tiene stock y su estado es pausado.')
+  }else if(stock == '' || stock == isNaN){
+    objProducto.stock = objProducto.stock
+  } else {
+    objProducto.stock = parseInt(stock);
+  }
+}
+function cargarProductosAdmin(lista){
+  let texto = "";
+  for (let i = 0; i < lista.length; i++) {
+    let prodActual = lista[i];
+    texto += `
+            <option>${prodActual.nombre}</option>
+        `;
+  }
+  get("elegirProductoAdmin").innerHTML = texto;
+}
+
+
+
+function verInformeDeGanancias () { //Muestra en lista el producto con sus unidades vendidas y luego la ganancia total de todos los productos
+  let texto = ''
+  let cantidadUnidades = 0;
+  let gananciaTotal = 0;
+  let comprasAprobadas = sistema.obtenerEstadoCompra('aprobada');
+  for(let i =0; i< comprasAprobadas.length; i++) {
+    let compraActual = comprasAprobadas[i];
+    cantidadUnidades += compraActual.unidades;
+    gananciaTotal += compraActual.montoTotal;
+    texto += `
+    <li>Producto ${compraActual.nombre}</li>
+    <li>Cantidad de unidades vendidas ${compraActual.unidades}</li>
+    <li>Ganancia de compra ${compraActual.montoTotal}</li>
+    `
+  }
+  texto+= `<br><br><li>Ganancia Total ${gananciaTotal}</li>`
+    get('informeDeGanancias').innerHTML = texto;
+}
 //PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR
 
 
 
 
 // ARREGLAR IMPORTANTE :  Cuando iniciamos sesion con otro cliente se sigue mostrando la lista de compras de todos los clientes.
-
-//Posible arreglo en cargarTablaCompras if(compraActual.comprador == usuarioLogueado) { que se imprima todo lo de la tabla y sino que no se imprima, esto deberia hacer que se impriman solamente las compras del comprador que va a ser el cliente que ingreso al sistema y no imprime si hay compras de otros clientes}
 
