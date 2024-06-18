@@ -418,7 +418,6 @@ function montoTotalySaldoCliente() { // Obtiene el objeto del cliente, luego rec
   parrafo.innerHTML = `Saldo disponible: $${cliente.saldo} Monto total de compras: ${montoTotalComprasAprobadas}`  
 }
 
-//ARREGLAR FUNCTION
 
 
 // COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS
@@ -593,7 +592,7 @@ function verInformeDeGanancias () { //Muestra en lista el producto con sus unida
 
 
 
-// ARREGLAR IMPORTANTE :  Cuando iniciamos sesion con otro cliente se sigue mostrando la lista de compras de todos los clientes.
+// ARREGLAR IMPORTANTE :  Cuando iniciamos sesion con otro cliente se sigue mostrando la ultima lista de compra del anterior cliente.
 
 // ARREGLAR INFORME DE GANANCIAS
 
