@@ -49,6 +49,7 @@ function mostrarSeccion(id) {
 function login() {
   //Ingresa a la aplicacion si cumple con los requisitos.
   let user = get("userLogin").value;
+  user.toLowerCase()
   let pass = get("passLogin").value;
   if (user == "" || pass == "") {
     alert("Los campos son obligatorios");
@@ -64,6 +65,7 @@ function login() {
     cargarProductos(sistema.listaProductos); // Carga los productos en el select con el parametro de lista de productos.
     seleccionarProducto()
     cargarTablaCompras()
+    filtrarTabla()
     mostrarSeccion("sectionCliente");
     montoTotalySaldoCliente();
     get("loginForm").reset();
@@ -240,7 +242,7 @@ function logout() {
 
 // COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS - COMPRA DE PRODUCTOS
 
-function verTodosLosProductos(){
+function verTodosLosProductos(){ // Te devuelve todos los productos en el select 
   cargarProductos(sistema.listaProductos)
   seleccionarProducto()
 }
@@ -287,7 +289,7 @@ function filtrarTabla() { // Aplica el filtro en la tabla de compras de las dife
     let canceladas = get('canceladas');
     let lista;
     if(pendientes.checked) { //Comprueba cual radio button esta seleccionado y ejecuta la funcion con su estado correspondiente para mostrar el estado seleccionado.
-      lista = sistema.obtenerEstadoCompra('pendiente');
+      lista = sistema.obtenerMisComprasPorEstado('pendiente');
       if(lista.length == 0) {
         ocultar ('tablaComprasCliente')
       }else {
@@ -295,7 +297,7 @@ function filtrarTabla() { // Aplica el filtro en la tabla de compras de las dife
         mostrar("tablaComprasCliente");
       }
     } else if(aprobadas.checked){
-      lista = sistema.obtenerEstadoCompra('aprobada');
+      lista = sistema.obtenerMisComprasPorEstado('aprobada');
       if(lista.length == 0) {
         ocultar ('tablaComprasCliente')
       }else {
@@ -303,7 +305,7 @@ function filtrarTabla() { // Aplica el filtro en la tabla de compras de las dife
         mostrar("tablaComprasCliente");
       } 
     }else if(canceladas.checked) {
-      lista = sistema.obtenerEstadoCompra('cancelada');
+      lista = sistema.obtenerMisComprasPorEstado('cancelada');
       if(lista.length == 0) {
         ocultar ('tablaComprasCliente')
       }else {
@@ -311,7 +313,7 @@ function filtrarTabla() { // Aplica el filtro en la tabla de compras de las dife
         mostrar("tablaComprasCliente");
       }
     }else {
-      lista = sistema.obtenerCompras()
+      lista = sistema.obtenerMisCompras()
       if(lista.length == 0) {
         ocultar('tablaComprasCliente')
       }else {
@@ -325,14 +327,14 @@ function filtrarTabla() { // Aplica el filtro en la tabla de compras de las dife
 function cargarTablaCompras(estado = '') { //Obtiene una lista con un estado de compra y las carga en HTML como una tabla.
   let lista = [];
   if (estado == '') {
-    lista = sistema.obtenerCompras();
+    lista = sistema.obtenerMisCompras();
   } else if(estado == 'pendiente') {
-    lista = sistema.obtenerEstadoCompra('pendiente');
+    lista = sistema.obtenerMisComprasPorEstado('pendiente');
   }else if( estado == 'aprobada') {
-    lista =sistema.obtenerEstadoCompra('aprobada')
- 
+    lista =sistema.obtenerMisComprasPorEstado('aprobada')
+
   }else {
-    lista =sistema.obtenerEstadoCompra('cancelada');
+    lista =sistema.obtenerMisComprasPorEstado('cancelada');
   }
   
   let articuloComprado = "";
@@ -375,6 +377,7 @@ function comprar() {
     sistema.listaCompras.push(
       new Compra(producto.nombre, unidades, producto.precio, producto.url)
     );
+    
   }
   cargarTablaCompras() // Se carga la tabla con el nuevo contenido de la compra
   filtrarTabla() // Filtra esta tabla para que siga mostrando el radio button seleccionado
@@ -384,8 +387,8 @@ function comprar() {
 function cancelarCompraCliente() { //Actualiza la tabla de compras del cliente.
   let idCompra = parseInt(this.id); //Como se ejecuta en un boton agarra el id de ese boton que se esta ejecutando
   sistema.cancelarCompra(idCompra);
-   cargarTablaCompras();
-   filtrarTabla()
+  cargarTablaCompras();
+  filtrarTabla()
 }
 
 function verOfertas(){ // Cuando se ejecuta se muestran unicamente los productos en oferta dentro del select donde mostramos los productos disponibles.
@@ -407,7 +410,7 @@ function montoTotalySaldoCliente() { // Obtiene el objeto del cliente, luego rec
   let parrafo = get('clienteSaldoMontoTotal')
   let usernameCliente = sistema.usuarioLogueado;
   let cliente = sistema.obtenerCliente(usernameCliente)
-  let listaAprobadas =  sistema.obtenerEstadoCompra('aprobada');
+  let listaAprobadas =  sistema.obtenerMisComprasPorEstado('aprobada');
   let montoTotalComprasAprobadas = 0;
   for(let i=0; i< listaAprobadas.length;i++){
     let compraActual = listaAprobadas[i];
@@ -495,6 +498,7 @@ function cargarTablaDeAprobaciones(estado) {  //Carga la tabla correspondiente s
 function aprobarCompraAdmin () { // Aprueba la compra del cliente y actualiza las tablas tanto de cliente como de administrador
   let idCompra = parseInt(this.id)
   sistema.aprobarCompra(idCompra)
+  console.log(idCompra);
   mostrarListaAprobaciones()
   cargarTablaCompras()
 }
@@ -516,7 +520,7 @@ function crearProducto (){
   }
 }
 
-function mostrarProductoAdmin(){
+function mostrarProductoAdmin(){ // Muestra el producto seleccionado del select como un articulo.
   let articulo = "";
   let nombreProducto = get("elegirProductoAdmin").value;
   let objProducto = sistema.obtenerProducto(nombreProducto); // Si existe el nombre nos devuelve el objeto entero del producto seleccionado.
@@ -556,7 +560,7 @@ function modificarEstadoProducto () {
     objProducto.stock = parseInt(stock);
   }
 }
-function cargarProductosAdmin(lista){
+function cargarProductosAdmin(lista){ // Carga los productos en el select para posteriormente modificar el producto.
   let texto = "";
   for (let i = 0; i < lista.length; i++) {
     let prodActual = lista[i];
@@ -568,31 +572,26 @@ function cargarProductosAdmin(lista){
 }
 
 
-
 function verInformeDeGanancias () { //Muestra en lista el producto con sus unidades vendidas y luego la ganancia total de todos los productos
   let texto = ''
-  let cantidadUnidades = 0;
+  let productos = sistema.listaProductos;
   let gananciaTotal = 0;
   let comprasAprobadas = sistema.obtenerEstadoCompra('aprobada');
-  for(let i =0; i< comprasAprobadas.length; i++) {
-    let compraActual = comprasAprobadas[i];
-    cantidadUnidades += compraActual.unidades;
-    gananciaTotal += compraActual.montoTotal;
-    texto += `
-    <li>Producto ${compraActual.nombre}</li>
-    <li>Cantidad de unidades vendidas ${compraActual.unidades}</li>
-    <li>Ganancia de compra ${compraActual.montoTotal}</li>
-    `
+  for(let i  =0; i < productos.length ; i++){
+    let prodActual = productos[i];
+    if(prodActual.unidadesVendidas > 0 ){
+      texto += `
+        <li>Producto: ${prodActual.nombre} Cantidad de unidades vendidas: ${prodActual.unidadesVendidas}</li><br>
+      `
+    }
   }
-  texto+= `<br><br><li>Ganancia Total ${gananciaTotal}</li>`
-    get('informeDeGanancias').innerHTML = texto;
+  for(let i =0; i< comprasAprobadas.length; i++) {
+        let compraActual = comprasAprobadas[i];
+        gananciaTotal += compraActual.montoTotal;
+  }
+  texto+= `<br><br><li>Ganancia Total $${gananciaTotal}</li>`
+  get('informeDeGanancias').innerHTML = texto;
 }
 //PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR - PERFIL ADMINISTRADOR
 
-
-
-
-// ARREGLAR IMPORTANTE :  Cuando iniciamos sesion con otro cliente se sigue mostrando la ultima lista de compra del anterior cliente.
-
-// ARREGLAR INFORME DE GANANCIAS
 

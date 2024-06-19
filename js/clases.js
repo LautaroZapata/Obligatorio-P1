@@ -75,7 +75,7 @@ class Sistema {
         }
         return resp
     }    
-    obtenerCompras() { //Devuelve el array de la lista de compras
+    obtenerCompras() { //Devuelve el array de la lista de compras. (Lo utiliza el administrador)
         return this.listaCompras;
     }
     cancelarCompra(idCompra) {
@@ -97,6 +97,7 @@ class Sistema {
                     compraActual.estado = 'aprobada'
                     cliente.saldo -= compraActual.montoTotal
                     producto.stock -= compraActual.unidades;
+                    producto.unidadesVendidas ++
                 }else {
                     alert('Saldo insuficiente o producto sin stock');
                 }
@@ -107,11 +108,31 @@ class Sistema {
         }        
     }
 
-    obtenerEstadoCompra(estado){ //Obtiene el estado del producto y el objeto completo
+     obtenerEstadoCompra(estado){ //Obtiene el estado del producto y el objeto completo (funcion admin)
         let lista =[];
         for(let i =0; i < this.listaCompras.length;i++) {
             let compraActual = this.listaCompras[i];
             if(compraActual.estado == estado ) { 
+                lista.push(compraActual);
+            }
+        }
+        return lista;
+    }
+    obtenerMisComprasPorEstado(estado){ //Obtiene el estado del producto y el objeto completo (funcion cliente)
+        let lista =[];
+        for(let i =0; i < this.listaCompras.length;i++) {
+            let compraActual = this.listaCompras[i];
+            if(compraActual.estado == estado && this.usuarioLogueado == compraActual.comprador.username ) { 
+                lista.push(compraActual);
+            }
+        }
+        return lista;
+    }
+    obtenerMisCompras() { // El cliente obtiene sus compras
+        let lista =[];
+        for(let i =0; i < this.listaCompras.length;i++) {
+            let compraActual = this.listaCompras[i];
+            if(this.usuarioLogueado == compraActual.comprador.username ) { 
                 lista.push(compraActual);
             }
         }
@@ -147,6 +168,7 @@ class Cliente {
 }
 
 let idProducto = 1; // Contador de id para productos inicializado en 1 para que cada producto tenga su id unico.
+
 class Producto {
     constructor (nombre,precio,descripcion,url,stock){
         this.nombre = nombre;
@@ -156,7 +178,8 @@ class Producto {
         this.stock = stock;
         this.estado = true;
         this.oferta = false;
-        this.id = 'idProd ' + (idProducto++)
+        this.id = 'PROD_ID_ ' + (idProducto++)
+        this.unidadesVendidas = 0;
     }
     estaEnOferta() { // Verifica si el producto esta en oferta o no y devuelve un mensaje
         let oferta = '';
