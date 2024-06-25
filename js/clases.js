@@ -75,7 +75,7 @@ class Sistema {
         }
         return resp
     }    
-    obtenerCompras() { //Devuelve el array de la lista de compras
+    obtenerCompras() { //Devuelve el array de la lista de compras. (Lo utiliza el administrador)
         return this.listaCompras;
     }
     cancelarCompra(idCompra) {
@@ -90,18 +90,25 @@ class Sistema {
     aprobarCompra(idCompra) { // Recorre la lista de compras pendientes y si coincide el parametro idCompra con el id de la compra se actualiza el estado de la compra y se le resta el monto total de la compra al saldo del cliente
         for(let i =0; i< this.listaCompras.length;i++) {
             let compraActual = this.listaCompras[i];
-            let cliente = this.obtenerCliente(compraActual.comprador)
+            let cliente = this.obtenerCliente(compraActual.comprador.username)
+            let producto = this.obtenerProducto(compraActual.nombre)
             if(idCompra == compraActual.id) {
-                if(compraActual.estado == "pendiente" && cliente.saldo >= compraActual.montoTotal) {
+                if(compraActual.estado == "pendiente" && cliente.saldo >= compraActual.montoTotal && compraActual.unidades <= producto.stock) {
                     compraActual.estado = 'aprobada'
                     cliente.saldo -= compraActual.montoTotal
+                    producto.stock -= compraActual.unidades;
+                    producto.unidadesVendidas ++
                 }else {
-                    alert('El cliente no tiene saldo suficiente');
+                    alert('Saldo insuficiente o producto sin stock');
+                }
+                if(producto.stock == 0) {
+                    producto.estado = false
                 }
             }
         }        
     }
-    obtenerEstadoCompra(estado){ //Obtiene el estado del producto y el objeto completo
+
+     obtenerEstadoCompra(estado){ //Obtiene el estado del producto y el objeto completo (funcion admin)
         let lista =[];
         for(let i =0; i < this.listaCompras.length;i++) {
             let compraActual = this.listaCompras[i];
@@ -111,7 +118,27 @@ class Sistema {
         }
         return lista;
     }
-    
+    obtenerMisComprasPorEstado(estado){ //Obtiene el estado del producto y el objeto completo (funcion cliente)
+        let lista =[];
+        for(let i =0; i < this.listaCompras.length;i++) {
+            let compraActual = this.listaCompras[i];
+            if(compraActual.estado == estado && this.usuarioLogueado == compraActual.comprador.username ) { 
+                lista.push(compraActual);
+            }
+        }
+        return lista;
+    }
+    obtenerMisCompras() { // El cliente obtiene sus compras
+        let lista =[];
+        for(let i =0; i < this.listaCompras.length;i++) {
+            let compraActual = this.listaCompras[i];
+            if(this.usuarioLogueado == compraActual.comprador.username ) { 
+                lista.push(compraActual);
+            }
+        }
+        return lista;
+    }
+
 }
 
 
@@ -141,16 +168,18 @@ class Cliente {
 }
 
 let idProducto = 1; // Contador de id para productos inicializado en 1 para que cada producto tenga su id unico.
+
 class Producto {
-    constructor (nombre,precio,descripcion,url,stock,estado,oferta){
+    constructor (nombre,precio,descripcion,url,stock){
         this.nombre = nombre;
         this.precio = precio;
         this.descripcion = descripcion;
         this.url = url;
         this.stock = stock;
-        this.estado = estado;
-        this.oferta = oferta;
-        this.id = 'idProd ' + (idProducto++)
+        this.estado = true;
+        this.oferta = false;
+        this.id = 'PROD_ID_ ' + (idProducto++)
+        this.unidadesVendidas = 0;
     }
     estaEnOferta() { // Verifica si el producto esta en oferta o no y devuelve un mensaje
         let oferta = '';
@@ -181,7 +210,7 @@ class Compra {
         this.montoTotal = this.precio * this.unidades,
         this.imagen = imagen,
         this.id = idCompra++,
-        this.comprador = sistema.usuarioLogueado
+        this.comprador = sistema.obtenerCliente(sistema.usuarioLogueado)
 
     }
     
